@@ -1,0 +1,41 @@
+<div>
+  <div><h4>Search</h4><input type="text" width="200px" #search on-keyup="searchText = search.value" ></div>
+  <table>
+    <thead >
+      <tr >
+        <th *ngFor="let column of columns">
+          <span>{{column.displayText}}</span>
+          <span *ngIf="column.issortable">
+              <img src="assets\Images\sortIcon.jpg" width="15px" height="15px" on-click="onSortClick(column)">
+          </span>
+        </th>
+      </tr>
+    </thead>
+    <tr *ngFor="let value of (values|dgsort: sorting)|dgSearch:columns:searchText|pagination:pager.startIndex:pager.endIndex;let i=index;let editRowMode=false;">
+        <td *ngFor="let column of columns">
+            <span [hidden]="editRowMode">
+                {{value[column.origProperty]}}
+            </span>
+            <input type="text" [hidden]="!editRowMode"  [(ngModel)]="value[column.origProperty]"/>
+        </td>
+        <td>
+          <button width="20px" [hidden]="editRowMode" on-click="editRowMode = true">Edit</button>
+          <button width="20px" [hidden]="!editRowMode"  on-click="editRowMode = false; onUpdateRow(value);">Save</button>
+        </td>
+        <td>
+          <button width="20px" [hidden]="!editRowMode"  on-click="editRowMode = false">Cancel</button>
+          <button width="20px" [hidden]="editRowMode"   on-click="onDeleteRow(i,value)">Delete</button>
+        </td>
+    </tr>
+  </table>
+  <br/>
+  <ul *ngIf="pager.pages " class="pagination">
+    <li><a on-click="setPage(1)">First</a></li>
+    <li><a on-click="setPage(pager.currentPage - 1)">Previous</a></li>
+    <li *ngFor="let page of pager.pages">
+        <a on-click="setPage(page)" [ngClass]="{'active': page === pager.currentPage}">{{page}}</a>
+    </li>
+    <li><a on-click="setPage(pager.currentPage + 1)">Next</a></li>
+    <li><a on-click="setPage(pager.totalPages)">Last</a></li>
+  </ul>
+  </div>
